@@ -1,0 +1,18 @@
+LoadModule proxy_module            ${buildout:directory}/modules/mod_proxy.so
+LoadModule proxy_http_module       ${buildout:directory}/modules/mod_proxy_http.so
+LoadModule proxy_balancer_module   ${buildout:directory}/modules/mod_proxy_balancer.so
+
+Listen ${listen:cluster}:${ports:balancer}
+
+<VirtualHost ${listen:cluster}:${ports:balancer}>
+    ProxyPass / balancer://zeocluster/
+    <Proxy balancer://zeocluster>
+        BalancerMember http://127.0.0.1:${ports:plone1}
+        BalancerMember http://127.0.0.1:${ports:plone2}
+        BalancerMember http://127.0.0.1:${ports:plone3}
+        
+        ProxySet lbmethod=bytraffic
+    </Proxy>
+    
+    ProxyPassInterpolateEnv On
+</VirtualHost>

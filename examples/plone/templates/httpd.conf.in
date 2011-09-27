@@ -1,0 +1,11 @@
+PidFile ${buildout:directory}/var/httpd.pid
+
+ErrorLog ${buildout:directory}/var/log/error.log
+
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+CustomLog ${buildout:directory}/var/log/access.log common 
+
+User ${users:httpd}
+Group ${users:group}
+
+Include ${buildout:directory}/conf/conf.d/*

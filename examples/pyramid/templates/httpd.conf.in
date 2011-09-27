@@ -1,0 +1,13 @@
+PidFile ${buildout:directory}/var/httpd.pid
+
+LoadModule  wsgi_module     ${buildout:directory}/modules/mod_wsgi.so
+
+ErrorLog ${buildout:directory}/var/log/error.log
+
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+CustomLog ${buildout:directory}/var/log/access.log common 
+
+User ${users:httpd}
+Group ${users:group}
+
+Include ${buildout:directory}/conf/conf.d/*

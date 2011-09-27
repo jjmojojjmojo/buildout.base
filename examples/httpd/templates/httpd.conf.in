@@ -1,0 +1,17 @@
+PidFile ${buildout:directory}/var/httpd.pid
+
+Listen ${listen:public}:${ports:public}
+
+ServerName ${names:public}
+
+DocumentRoot ${buildout:directory}/www
+<Directory ${buildout:directory}/www>
+    Options Indexes FollowSymLinks
+</Directory>
+
+ErrorLog ${buildout:directory}/var/error.log
+
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+CustomLog ${buildout:directory}/var/access.log common 
+
+Include ${buildout:directory}/conf/conf.d/*

@@ -1,0 +1,61 @@
+; Sample supervisor config file.
+
+[unix_http_server]
+file=${buildout:directory}/var/supervisor.sock   ; (the path to the socket file)
+
+; uncomment to turn on HTTP access to control processes
+;[inet_http_server]
+;port = *:9001
+
+[supervisord]
+logfile=${buildout:directory}/var/log/supervisord.log 
+logfile_maxbytes=50MB       
+logfile_backups=10          
+loglevel=info               
+pidfile=${buildout:directory}/var/supervisord.pid 
+nodaemon=false             
+minfds=1024                
+minprocs=200               
+
+
+; the below section must remain in the config file for RPC
+; (supervisorctl/web interface) to work, additional interfaces may be
+; added by defining them in separate rpcinterface: sections
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix://${buildout:directory}/var/supervisor.sock ; use a unix:// URL  for a unix socket
+history_file=~/.sc_history  ; use readline history if available
+
+[program:apache]
+command = ${buildout:directory}/bin/httpd -f ${buildout:directory}/conf/httpd.conf -DFOREGROUND
+redirect_stderr=true 
+priority=5
+user = ${users:httpd}
+
+[program:zeo]
+command=${buildout:directory}/parts/zeoserver/bin/runzeo
+priority=1
+user = ${users:zeo}
+
+[program:client1]
+command=${buildout:directory}/bin/client1 console
+priority=2
+redirect_stderr=true
+user = ${users:clients}
+
+[program:client2]
+command=${buildout:directory}/bin/client2 console
+priority=3
+redirect_stderr=true
+user = ${users:clients}
+
+[program:client3]
+command=${buildout:directory}/bin/client3 console
+priority=4
+redirect_stderr=true
+user = ${users:clients}
+
+[group:site]
+programs=zeo,client1,client2,client3,apache

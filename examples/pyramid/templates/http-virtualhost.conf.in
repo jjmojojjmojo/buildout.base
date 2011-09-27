@@ -1,0 +1,21 @@
+Listen ${listen:public}:${ports:public}
+
+<VirtualHost ${listen:public}:${ports:public}>
+    ServerName ${names:public}
+    
+    # Use only 1 Python sub-interpreter.  Multiple sub-interpreters
+    # play badly with C extensions.
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    WSGIDaemonProcess \
+       pyramid \
+       user=${users:httpd} \
+       group=${users:group} \
+       processes=1 \
+       threads=4
+    
+    WSGIImportScript ${buildout:bin-directory}/wsgienv.py process-group=%{GLOBAL} application-group=%{GLOBAL}
+       
+    WSGIScriptAlias / ${buildout:bin-directory}/pyramid.wsgi
+
+</VirtualHost>

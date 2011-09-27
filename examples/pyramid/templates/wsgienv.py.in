@@ -1,0 +1,27 @@
+"""
+Pre-load script that puts all of the eggs in our buildout into 
+the environment for each WSGI process.
+
+Desiged to be run via WSGIImportScript directive, it will only
+execute as needed.
+"""
+# from http://code.google.com/p/modwsgi/wiki/VirtualEnvironments#Baseline_Environment
+ALLDIRS = ['${pyramid-env:location}/lib/python2.6/site-packages']
+
+import sys 
+import site 
+
+# Remember original sys.path.
+prev_sys_path = list(sys.path) 
+
+# Add each new site-packages directory.
+for directory in ALLDIRS:
+  site.addsitedir(directory)
+
+# Reorder sys.path so new directories at the front.
+new_sys_path = [] 
+for item in list(sys.path): 
+    if item not in prev_sys_path: 
+        new_sys_path.append(item) 
+        sys.path.remove(item) 
+sys.path[:0] = new_sys_path 

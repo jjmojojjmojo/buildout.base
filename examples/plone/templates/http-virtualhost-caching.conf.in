@@ -1,0 +1,16 @@
+LoadModule cache_module          ${buildout:directory}/modules/mod_cache.so
+LoadModule disk_cache_module     ${buildout:directory}/modules/mod_disk_cache.so
+
+Listen ${listen:public}:${ports:public}
+
+<VirtualHost ${listen:public}:${ports:public}>
+    ServerName ${names:public}
+    
+    ProxyPass / http://${listen:cluster}:${ports:balancer}/VirtualHostBase/http/${names:public}:${ports:public}/${plone-init:site-id}/VirtualHostRoot/
+    
+    # caching setup
+    CacheRoot ${buildout:directory}/var/cache
+    CacheEnable disk /
+    CacheDirLevels 5
+    CacheDirLength 3
+</VirtualHost>

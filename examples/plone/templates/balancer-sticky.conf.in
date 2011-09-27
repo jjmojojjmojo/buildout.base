@@ -1,0 +1,26 @@
+LoadModule proxy_module            ${buildout:directory}/modules/mod_proxy.so
+LoadModule proxy_http_module       ${buildout:directory}/modules/mod_proxy_http.so
+LoadModule proxy_balancer_module   ${buildout:directory}/modules/mod_proxy_balancer.so
+LoadModule headers_module          ${buildout:directory}/modules/mod_headers.so
+
+Listen ${listen:cluster}:${ports:balancer}
+
+<VirtualHost ${listen:cluster}:${ports:balancer}>
+    ProxyPreserveHost On
+    
+    Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED
+
+    ProxyPass / balancer://zeocluster/ 
+    
+    <Proxy balancer://zeocluster>
+        BalancerMember http://127.0.0.1:${ports:plone1} route=1
+        BalancerMember http://127.0.0.1:${ports:plone2} route=2
+        BalancerMember http://127.0.0.1:${ports:plone3} route=3
+        
+        ProxySet stickysession=ROUTEID
+        ProxySet lbmethod=bytraffic
+    </Proxy>
+</VirtualHost>
+
+# sticky-session debugging log format
+LogFormat "%h %l %u %t \"%r\" %>s %b sroute: %{BALANCER_SESSION_ROUTE}e wroute: %{BALANCER_WORKER_ROUTE}e changed: %{BALANCER_ROUTE_CHANGED}e cookie: %{Set-Cookie}o" stickysessiondebug

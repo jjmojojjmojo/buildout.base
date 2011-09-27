@@ -1,0 +1,21 @@
+LoadModule ssl_module  ${buildout:directory}/modules/mod_ssl.so
+
+<IfModule ssl_module>
+SSLRandomSeed startup builtin
+SSLRandomSeed connect builtin
+</IfModule>
+
+Listen ${listen:public}:${ports:ssl}
+
+# example from http://httpd.apache.org/docs/2.2/mod/mod_ssl.html#sslsessioncache
+SSLSessionCache shm:${apache-settings:state_dir}/ssl_gcache_data(512000)
+
+<VirtualHost ${listen:public}:${ports:ssl}>
+    ServerName ${names:public}
+
+    SSLEngine on
+
+    SSLCertificateKeyFile ${ssl-settings:key_file}
+    SSLCertificateFile ${ssl-settings:cert_file}
+    
+</VirtualHost>
