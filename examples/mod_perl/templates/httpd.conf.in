@@ -1,0 +1,15 @@
+PidFile ${buildout:directory}/var/httpd.pid
+
+LoadModule  perl_module     ${buildout:directory}/modules/mod_perl.so
+
+Listen ${listen:public}:${ports:public}
+
+ErrorLog ${buildout:directory}/var/logs/error.log
+
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+CustomLog ${buildout:directory}/var/logs/access.log common 
+
+User ${users:httpd}
+Group ${users:group}
+
+Include ${buildout:directory}/conf/conf.d/*

@@ -1,0 +1,9 @@
+Alias /perl/ ${buildout:directory}/perl/rock.pl
+<Location /perl/>
+      SetHandler perl-script
+      PerlResponseHandler ModPerl::Registry
+      PerlOptions +ParseHeaders
+      Options +ExecCGI
+      Order allow,deny
+      Allow from all 
+</Location>

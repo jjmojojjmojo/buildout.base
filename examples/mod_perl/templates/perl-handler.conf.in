@@ -1,0 +1,4 @@
+<Location /rocks>
+      SetHandler perl-script
+      PerlResponseHandler  MyApache2::Rocks
+</Location>
