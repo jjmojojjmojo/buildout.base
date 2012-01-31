@@ -33,5 +33,16 @@ ehthumbs.db
 Icon?
 Thumbs.db
 src/
+parts/
 eggs/
-
+bin/
+modules/
+develop-eggs/
+var/
+conf/
+.installed.cfg
+.mr.developer.cfg
+etc/
+lib/
+include/
+man/
