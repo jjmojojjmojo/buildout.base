@@ -3,7 +3,8 @@ ReStructuredText Crash-Course
 =============================
 .. note:: 
    This document was pulled from http://docutils.sourceforge.net/docs/user/rst/quickstart.txt
-
+ 
+   
 
 A ReStructuredText Primer
 =========================
