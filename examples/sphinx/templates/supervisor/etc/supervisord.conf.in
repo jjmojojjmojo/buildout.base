@@ -1,0 +1,40 @@
+; Sample supervisor config file.
+
+[unix_http_server]
+file=${buildout:directory}/var/supervisor.sock   ; (the path to the socket file)
+
+; uncomment to turn on HTTP access to control processes
+;[inet_http_server]
+;port = *:9001
+
+[supervisord]
+logfile=${buildout:directory}/var/log/supervisord.log 
+logfile_maxbytes=50MB       
+logfile_backups=10          
+loglevel=info               
+pidfile=${buildout:directory}/var/supervisord.pid 
+nodaemon=false             
+minfds=1024                
+minprocs=200               
+
+
+; the below section must remain in the config file for RPC
+; (supervisorctl/web interface) to work, additional interfaces may be
+; added by defining them in separate rpcinterface: sections
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix://${buildout:directory}/var/supervisor.sock ; use a unix:// URL  for a unix socket
+history_file=~/.sc_history  ; use readline history if available
+
+[program:docs]
+command = ${buildout:bin-directory}/python -m SimpleHTTPServer ${ports:docs}
+directory = ${buildout:directory}/www/html
+redirect_stderr=true
+
+[program:autodoc]
+# maintains the 'watchmedo' watching tool, to build the docs whenever the files change.
+command = ${buildout:bin-directory}/watchmedo shell-command -R --wait -c '${buildout:bin-directory}/buildout -No install generate-docs' ${buildout:directory}/docs
+redirect_stderr = true
+directory = ${buildout:directory}
